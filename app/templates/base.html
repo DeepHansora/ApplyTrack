@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ApplyTrack — Your Search, Structured{% endblock %}</title>
+  
+  <meta name="description" content="{% block meta_description %}A job application management platform built for clarity, control, and career momentum.{% endblock %}">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='favicon.ico') }}">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', path='img/favicon.svg') }}">
+
+  <!-- Design System Tokens & Global Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', path='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+  
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <!-- Header Partial -->
+  {% include "partials/header.html" %}
+
+  <!-- Main Content Block -->
+  <main class="main-content" id="main-content" role="main">
+    {% block content %}
+    <!-- Child templates inject page content here -->
+    {% endblock %}
+  </main>
+
+  <!-- Footer Partial -->
+  {% include "partials/footer.html" %}
+
+  <!-- Core Accessible Scripts -->
+  <script src="{{ url_for('static', path='js/main.js') }}" defer></script>
+
+  {% block scripts_extra %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}ApplyTrack — Your Search, Structured{% endblock %}
+
+{% block content %}
+<!-- Hero Section (Editorial Minimalism & Echo Typography) -->
+<section class="hero-section" aria-labelledby="hero-heading">
+  <div class="site-container hero-container">
+    <div class="hero-kicker">Product Requirements / Technical Blueprint / v1.0</div>
+    
+    <div class="hero-brand-echo" aria-hidden="true">
+      <span class="echo-line echo-line--1">APPLY</span>
+      <span class="echo-line echo-line--2">TRACK</span>
+    </div>
+
+    <h1 id="hero-heading" class="hero-headline">
+      Your search,<br>structured.
+    </h1>
+
+    <p class="hero-lead">
+      A job application management platform built for clarity, control, and career momentum. Organize companies, active applications, interview rounds, resume versions, and AI-assisted match analysis in one coherent workspace.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/register" class="btn btn--primary">Get Started</a>
+      <a href="#features" class="btn btn--outline">Explore Features</a>
+    </div>
+  </div>
+</section>
+
+<!-- Principles Statement Banner -->
+<section class="principle-banner">
+  <div class="site-container principle-grid">
+    <div class="principle-item">
+      <span class="principle-label">Architecture</span>
+      <span class="principle-val">Modular Monolith</span>
+    </div>
+    <div class="principle-item">
+      <span class="principle-label">Data Privacy</span>
+      <span class="principle-val">Isolated &amp; Owned</span>
+    </div>
+    <div class="principle-item">
+      <span class="principle-label">AI Integration</span>
+      <span class="principle-val">Google Gemini</span>
+    </div>
+    <div class="principle-item">
+      <span class="principle-label">Rendering</span>
+      <span class="principle-val">Server-Rendered HTML</span>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section" id="features" aria-labelledby="features-heading">
+  <div class="site-container">
+    <div class="section-header">
+      <span class="section-kicker">Core System Architecture</span>
+      <h2 id="features-heading" class="section-title">Designed for rigor, transparency, and intent.</h2>
+    </div>
+
+    <div class="features-grid">
+      <!-- Feature 1: Application Tracking -->
+      <article class="feature-card">
+        <div class="feature-card__number">01</div>
+        <h3 class="feature-card__title">Application Lifecycle Tracking</h3>
+        <p class="feature-card__body">
+          Manage applications across structured states: Saved, Applied, Assessment, Interview, Offer, Rejected, and Withdrawn. Keep every transition consistent with atomic transactional status history logs.
+        </p>
+      </article>
+
+      <!-- Feature 2: Interview Management -->
+      <article class="feature-card">
+        <div class="feature-card__number">02</div>
+        <h3 class="feature-card__title">Interview Round Management</h3>
+        <p class="feature-card__body">
+          Track multi-round hiring loops per job with meeting links, interviewer feedback, round numbers, preparation notes, and upcoming timelines visible directly on your dashboard.
+        </p>
+      </article>
+
+      <!-- Feature 3: Resume Management -->
+      <article class="feature-card">
+        <div class="feature-card__number">03</div>
+        <h3 class="feature-card__title">Resume Reference Registry</h3>
+        <p class="feature-card__body">
+          Maintain versioned links to external resume documents and associate specific resume revisions with each application without unnecessary server-side document storage bloat.
+        </p>
+      </article>
+
+      <!-- Feature 4: In-App Reminders -->
+      <article class="feature-card">
+        <div class="feature-card__number">04</div>
+        <h3 class="feature-card__title">In-App Reminders &amp; Deadlines</h3>
+        <p class="feature-card__body">
+          Never miss an assessment deadline or follow-up email. Set time-bound in-app reminders linked to specific job records with database-enforced deduplication alerts.
+        </p>
+      </article>
+
+      <!-- Feature 5: Gemini AI Matching -->
+      <article class="feature-card feature-card--wide">
+        <div class="feature-card__number">05</div>
+        <h3 class="feature-card__title">AI-Assisted Resume Matching</h3>
+        <p class="feature-card__body">
+          Harness Google Gemini to compare your resume text against targeted job descriptions. Receive structured feedback with a transparent four-part Compatibility Score (Skills, Experience, Education, and Keywords) without misleading probability claims.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Closing Section -->
+<section class="cta-section" aria-labelledby="cta-heading">
+  <div class="site-container cta-container">
+    <div class="cta-content">
+      <h2 id="cta-heading" class="cta-title">Build your career search with intent.</h2>
+      <p class="cta-subtitle">
+        Maintain private, secure company directories and applications in one uncluttered workspace.
+      </p>
+    </div>
+    <div class="cta-action">
+      <a href="/register" class="btn btn--primary">Get Started Today</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

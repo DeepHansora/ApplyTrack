@@ -1,0 +1,30 @@
+# ApplyTrack Phase 1 Dependencies
+# Target Python Version: 3.13.1
+
+# Web Framework & ASGI Server
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# Settings & Environment Management
+pydantic-settings==2.7.1
+
+# Database & ORM
+sqlalchemy==2.0.36
+psycopg[binary]==3.2.3
+
+# Database Migrations
+alembic==1.14.0
+
+# Server-side HTML Templating & Form Parsing
+jinja2==3.1.5
+python-multipart==0.0.20
+
+# Authentication & Password Hashing
+argon2-cffi==25.1.0
+
+# Email Validation for Pydantic Schemas
+email-validator==2.4.0
+
+# Testing & HTTP Client
+pytest==8.3.4
+httpx==0.28.1

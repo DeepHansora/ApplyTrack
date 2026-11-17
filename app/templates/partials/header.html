@@ -1,0 +1,30 @@
+<header class="site-header" role="banner">
+  <div class="site-container site-header__inner">
+    <a href="/" class="site-logo" aria-label="ApplyTrack Home">
+      ApplyTrack
+    </a>
+
+    <!-- Accessible Mobile Menu Toggle Button (hidden on desktop > 768px) -->
+    <button type="button" 
+            class="menu-toggle" 
+            aria-controls="primary-navigation" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation menu">
+      <span class="menu-toggle__bar" aria-hidden="true"></span>
+      <span class="menu-toggle__bar" aria-hidden="true"></span>
+      <span class="menu-toggle__bar" aria-hidden="true"></span>
+    </button>
+
+    <!-- Navigation Container -->
+    <nav class="site-nav" id="primary-navigation" role="navigation" aria-label="Primary Navigation">
+      <ul class="site-nav__list">
+        <li class="site-nav__item">
+          <a href="/login" class="site-nav__link">Login</a>
+        </li>
+        <li class="site-nav__item">
+          <a href="/register" class="btn btn--primary site-nav__btn">Get Started</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
