@@ -11,7 +11,7 @@ sys.path.insert(0, ".")
 
 # Import application settings and declarative base metadata
 from app.config import settings
-from app.models.base import Base
+from app.models import Base
 
 # Alembic Config object
 config = context.config
