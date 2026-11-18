@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Login — ApplyTrack{% endblock %}
+
+{% block content %}
+<section class="site-container auth-section">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-kicker">Authentication &bull; Workspace Access</span>
+      <h1 class="auth-title">Log In</h1>
+      <p class="auth-subtitle">
+        Enter your credentials to access your private job search workspace and pipeline.
+      </p>
+    </div>
+
+    {% set flash = get_flashed_message() %}
+    {% if flash %}
+    <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+      <span class="flash__badge">{{ flash.category }}</span>
+      <span class="flash__message">{{ flash.message }}</span>
+    </div>
+    {% endif %}
+
+    <form method="post" action="/login" class="form">
+      {{ csrf_input() }}
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" 
+               id="email" 
+               name="email" 
+               class="form-input" 
+               required 
+               autocomplete="email" 
+               placeholder="e.g. katherine@example.com">
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" 
+               id="password" 
+               name="password" 
+               class="form-input" 
+               required 
+               minlength="8" 
+               maxlength="128" 
+               autocomplete="current-password" 
+               placeholder="••••••••••••">
+      </div>
+
+      <button type="submit" class="btn btn--primary form-submit">Log In</button>
+
+      <div class="form-footer">
+        <p>Don&rsquo;t have an account yet? <a href="/register" class="form-footer__link">Create an account</a></p>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

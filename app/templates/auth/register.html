@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Register — ApplyTrack{% endblock %}
+
+{% block content %}
+<section class="site-container auth-section">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-kicker">Account Setup &bull; Step 01</span>
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">
+        Set up your private ApplyTrack workspace for structured job application management and career momentum.
+      </p>
+    </div>
+
+    {% set flash = get_flashed_message() %}
+    {% if flash %}
+    <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+      <span class="flash__badge">{{ flash.category }}</span>
+      <span class="flash__message">{{ flash.message }}</span>
+    </div>
+    {% endif %}
+
+    <form method="post" action="/register" class="form">
+      {{ csrf_input() }}
+
+      <div class="form-group">
+        <label for="full_name" class="form-label">Full Name</label>
+        <input type="text" 
+               id="full_name" 
+               name="full_name" 
+               class="form-input" 
+               required 
+               maxlength="255" 
+               autocomplete="name" 
+               placeholder="e.g. Katherine Johnson"
+               aria-describedby="full-name-hint">
+        <span id="full-name-hint" class="form-hint">Used for personalized workspace greeting</span>
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" 
+               id="email" 
+               name="email" 
+               class="form-input" 
+               required 
+               autocomplete="email" 
+               placeholder="e.g. katherine@example.com"
+               aria-describedby="email-hint">
+        <span id="email-hint" class="form-hint">Your primary identity for secure login</span>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" 
+               id="password" 
+               name="password" 
+               class="form-input" 
+               required 
+               minlength="8" 
+               maxlength="128" 
+               autocomplete="new-password" 
+               placeholder="8–128 characters"
+               aria-describedby="password-requirements">
+        
+        <div id="password-requirements" class="form-requirements">
+          <span class="form-requirements__title">Password Requirements</span>
+          <ul class="form-requirements__list">
+            <li class="form-requirements__item">&bull; Between 8 and 128 characters in length</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox-container" for="ai_consent">
+          <input type="checkbox" 
+                 id="ai_consent" 
+                 name="ai_consent" 
+                 value="true" 
+                 class="form-checkbox">
+          <span class="form-checkbox-label">
+            <span class="form-checkbox-title">Enable AI-assisted resume matching</span>
+            <span class="form-checkbox-desc">
+              Allow ApplyTrack's AI features to parse job descriptions, compare resumes against job postings, and evaluate alignment. You can change this preference anytime in your settings.
+            </span>
+          </span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn--primary form-submit">Create Account</button>
+
+      <div class="form-footer">
+        <p>Already have an account? <a href="/login" class="form-footer__link">Log in here</a></p>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

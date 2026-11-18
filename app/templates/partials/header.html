@@ -18,12 +18,21 @@
     <!-- Navigation Container -->
     <nav class="site-nav" id="primary-navigation" role="navigation" aria-label="Primary Navigation">
       <ul class="site-nav__list">
+        {% if user %}
+        <li class="site-nav__item">
+          <a href="/dashboard" class="site-nav__link">Dashboard</a>
+        </li>
+        <li class="site-nav__item">
+          <span class="site-nav__user-chip">{{ user.full_name }}</span>
+        </li>
+        {% else %}
         <li class="site-nav__item">
           <a href="/login" class="site-nav__link">Login</a>
         </li>
         <li class="site-nav__item">
           <a href="/register" class="btn btn--primary site-nav__btn">Get Started</a>
         </li>
+        {% endif %}
       </ul>
     </nav>
   </div>

@@ -82,10 +82,15 @@ def decode_flash_message(
     Returns:
         A dict with 'category' and 'message' keys if valid, otherwise None.
     """
-    if not isinstance(cookie_value, str) or len(cookie_value) > MAX_FLASH_COOKIE_LENGTH or "." not in cookie_value:
+    if not isinstance(cookie_value, str) or len(cookie_value) > MAX_FLASH_COOKIE_LENGTH:
         return None
 
-    parts = cookie_value.split(".", 1)
+    # Strip optional RFC 6265 double quotes
+    cleaned_value = cookie_value.strip('"')
+    if "." not in cleaned_value:
+        return None
+
+    parts = cleaned_value.split(".", 1)
     if len(parts) != 2:
         return None
 

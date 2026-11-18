@@ -1,12 +1,14 @@
-"""FastAPI dependencies for request handling and resource management."""
+"""FastAPI dependencies for request handling, authentication, and resource management."""
 
 from typing import Generator
-from fastapi import HTTPException, Request, status
+from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.core.csrf import validate_csrf
 from app.database import SessionLocal
+from app.models.user import User
+from app.services.auth_service import AuthService, InvalidSessionError
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -20,6 +22,60 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def get_current_user(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> User | None:
+    """Retrieve the currently authenticated user from the session cookie.
+
+    Reads the raw session token from the HttpOnly session cookie, validates it
+    against the database via AuthService (checking absolute expiration, idle
+    timeout, revocation, and active user status).
+
+    Returns:
+        The authenticated User instance if the session is valid, or None if
+        missing, expired, revoked, inactive, or malformed.
+    """
+    raw_token = request.cookies.get(settings.SESSION_COOKIE_NAME)
+    if not raw_token:
+        return None
+
+    auth_service = AuthService(db)
+    try:
+        return auth_service.validate_session(raw_token)
+    except InvalidSessionError:
+        return None
+    except Exception:
+        # Prevent exposing internal database errors or sensitive information
+        return None
+
+
+def require_authenticated_user(
+    current_user: User | None = Depends(get_current_user),
+) -> User:
+    """Require an active authenticated user.
+
+    If no user is authenticated (missing, invalid, or expired session),
+    halts request processing and redirects the client to /login using HTTP 303.
+    Otherwise, returns the authenticated User instance.
+
+    Args:
+        current_user: The User resolved from get_current_user.
+
+    Returns:
+        The authenticated User instance.
+
+    Raises:
+        HTTPException: HTTP 303 See Other redirecting to /login if unauthenticated.
+    """
+    if current_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_303_SEE_OTHER,
+            headers={"Location": "/login"},
+        )
+    return current_user
 
 
 async def verify_csrf(request: Request) -> str:

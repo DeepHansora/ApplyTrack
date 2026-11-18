@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — ApplyTrack{% endblock %}
+
+{% block content %}
+<section class="site-container dashboard-section">
+  {% set flash = get_flashed_message() %}
+  {% if flash %}
+  <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+    <span class="flash__badge">{{ flash.category }}</span>
+    <span class="flash__message">{{ flash.message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Workspace Header -->
+  <header class="dashboard-header">
+    <div class="dashboard-header__main">
+      <div class="dashboard-header__kicker-group">
+        <span class="dashboard-kicker">Workspace &bull; Overview</span>
+        <span class="dashboard-badge">Session Active</span>
+      </div>
+      <h1 class="dashboard-title">Welcome, {{ user.full_name }}</h1>
+      <p class="dashboard-lead">
+        Your job application management command center. Monitor application progression, upcoming interviews, and career momentum.
+      </p>
+    </div>
+
+    <div class="dashboard-header__actions">
+      <form method="post" action="/logout">
+        {{ csrf_input() }}
+        <button type="submit" class="btn btn--outline">Log Out</button>
+      </form>
+    </div>
+  </header>
+
+  <!-- Section 1: Application Statistics (Placeholders / Phase 3 & 4 Indicators) -->
+  <div class="dashboard-stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__top">
+        <span class="stat-card__label">Total Applications</span>
+        <span class="stat-card__tag">Phase 3</span>
+      </div>
+      <span class="stat-card__value">&mdash;</span>
+      <span class="stat-card__note">Available when pipeline tracking activates in Phase 3</span>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__top">
+        <span class="stat-card__label">Active Pipelines</span>
+        <span class="stat-card__tag">Phase 3</span>
+      </div>
+      <span class="stat-card__value">&mdash;</span>
+      <span class="stat-card__note">Available when review tracking activates in Phase 3</span>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__top">
+        <span class="stat-card__label">Interviews Scheduled</span>
+        <span class="stat-card__tag">Phase 4</span>
+      </div>
+      <span class="stat-card__value">&mdash;</span>
+      <span class="stat-card__note">Available when interview hub activates in Phase 4</span>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__top">
+        <span class="stat-card__label">Offers Extended</span>
+        <span class="stat-card__tag">Phase 4</span>
+      </div>
+      <span class="stat-card__value">&mdash;</span>
+      <span class="stat-card__note">Available when offer milestones activate in Phase 4</span>
+    </div>
+  </div>
+
+  <!-- Section 2: Main Operational Cards (Recent Applications & Upcoming Interviews) -->
+  <div class="dashboard-grid">
+    <!-- Recent Applications Card -->
+    <div class="dashboard-card">
+      <div class="dashboard-card__header">
+        <div class="dashboard-card__title-group">
+          <h2 class="dashboard-card__title">Recent Applications</h2>
+        </div>
+        <span class="dashboard-card__phase">Phase 3: Pipeline Hub</span>
+      </div>
+
+      <div class="empty-state">
+        <span class="empty-state__kicker">Feature Not Available Yet</span>
+        <h3 class="empty-state__heading">Application lifecycle management</h3>
+        <p class="empty-state__body">
+          Application tracking will become available in Phase 3. You will be able to log company names, roles, submission dates, job URLs, and monitor stage transitions.
+        </p>
+        <span class="empty-state__badge">Scheduled for Phase 3 Implementation</span>
+      </div>
+    </div>
+
+    <!-- Upcoming Interviews Card -->
+    <div class="dashboard-card">
+      <div class="dashboard-card__header">
+        <div class="dashboard-card__title-group">
+          <h2 class="dashboard-card__title">Upcoming Interviews</h2>
+        </div>
+        <span class="dashboard-card__phase">Phase 4: Interview Hub</span>
+      </div>
+
+      <div class="empty-state">
+        <span class="empty-state__kicker">Feature Not Available Yet</span>
+        <h3 class="empty-state__heading">Interview round coordination</h3>
+        <p class="empty-state__body">
+          Interview scheduling will become available in Phase 4. You will be able to manage recruiter screens, technical assessments, behavioral rounds, and feedback notes.
+        </p>
+        <span class="empty-state__badge">Scheduled for Phase 4 Implementation</span>
+      </div>
+    </div>
+
+    <!-- Reminders & Action Items Card -->
+    <div class="dashboard-card">
+      <div class="dashboard-card__header">
+        <div class="dashboard-card__title-group">
+          <h2 class="dashboard-card__title">Reminders &amp; Deadlines</h2>
+        </div>
+        <span class="dashboard-card__phase">Phase 4: Productivity</span>
+      </div>
+
+      <div class="empty-state">
+        <span class="empty-state__kicker">Feature Not Available Yet</span>
+        <h3 class="empty-state__heading">Automated follow-up tracking</h3>
+        <p class="empty-state__body">
+          Task automation will become available in Phase 4. ApplyTrack will help you track thank-you notes, application follow-up milestones, and recruiter touchpoints.
+        </p>
+        <span class="empty-state__badge">Scheduled for Phase 4 Implementation</span>
+      </div>
+    </div>
+
+    <!-- Account & Security Profile Card -->
+    <div class="dashboard-card">
+      <div class="dashboard-card__header">
+        <div class="dashboard-card__title-group">
+          <h2 class="dashboard-card__title">Security &amp; Account Status</h2>
+        </div>
+        <span class="dashboard-card__phase">Phase 2: Operational</span>
+      </div>
+
+      <div class="profile-summary">
+        <div class="profile-summary__item">
+          <span class="profile-summary__label">Candidate Identity</span>
+          <span class="profile-summary__val">{{ user.full_name }}</span>
+        </div>
+
+        <div class="profile-summary__item">
+          <span class="profile-summary__label">Authentication Email</span>
+          <span class="profile-summary__val">{{ user.email }}</span>
+        </div>
+
+        <div class="profile-summary__item">
+          <span class="profile-summary__label">Account State</span>
+          <span class="profile-summary__val">{% if user.is_active %}Active{% else %}Inactive{% endif %}</span>
+        </div>
+
+        <div class="profile-summary__item">
+          <span class="profile-summary__label">AI Matching Feature</span>
+          <span class="profile-summary__val">{% if user.ai_consent %}Consent Granted{% else %}Disabled{% endif %}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
