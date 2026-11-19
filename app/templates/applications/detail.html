@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ application.job_title }} at {{ application.company_name or 'Company' }} — ApplyTrack
+{% endblock %}
+
+{% block content %}
+<section class="site-container directory-section">
+  <!-- Back Link -->
+  <a href="/applications" class="btn-back">
+    &larr; Back to Applications
+  </a>
+
+  <!-- Flash Message Display -->
+  {% set flash = get_flashed_message() %}
+  {% if flash %}
+  <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+    <span class="flash__badge">{{ flash.category }}</span>
+    <span class="flash__message">{{ flash.message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Detail Header Card -->
+  <div class="company-detail-card">
+    <div class="dashboard-header" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+      <div class="dashboard-header__main">
+        <div class="dashboard-header__kicker-group">
+          <span class="dashboard-kicker">Application Record &bull; {{ application.employment_type or "Role" }}</span>
+          <span class="badge badge--status-{{ application.status.lower() }}">{{ application.status }}</span>
+          {% if application.is_archived %}
+          <span class="badge badge--archived">Archived</span>
+          {% endif %}
+        </div>
+        <h1 class="dashboard-title">{{ application.job_title }}</h1>
+        <p class="dashboard-lead" style="margin-top: 4px;">
+          at 
+          <a href="/companies/{{ application.company_id }}" style="text-decoration: underline; color: var(--color-text-primary); font-weight: 600;">
+            {{ application.company_name or "Company" }}
+          </a>
+          {% if application.company and application.company.is_archived %}
+          <span class="badge badge--archived" style="font-size: 0.625rem; margin-left: 4px;">Company Archived</span>
+          {% endif %}
+          {% if application.job_url %}
+          &bull; 
+          <a href="{{ application.job_url }}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: var(--color-text-primary);">
+            Job Posting &nearr;
+          </a>
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="dashboard-header__actions">
+        <a href="/applications/{{ application.id }}/edit" class="btn btn--primary">Edit</a>
+        {% if application.is_archived %}
+        <form method="post" action="/applications/{{ application.id }}/unarchive" style="display:inline;">
+          {{ csrf_input() }}
+          <button type="submit" class="btn btn--outline">Unarchive</button>
+        </form>
+        {% else %}
+        <form method="post" action="/applications/{{ application.id }}/archive" style="display:inline;">
+          {{ csrf_input() }}
+          <button type="submit" class="btn btn--outline" onclick="return confirm('Archive this application? It will be hidden from default listings.');">
+            Archive
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="company-meta-grid">
+      <div class="company-meta-item">
+        <span class="company-meta-label">Company</span>
+        <span class="company-meta-value">
+          <a href="/companies/{{ application.company_id }}" style="text-decoration: underline;">
+            {{ application.company_name or "—" }}
+          </a>
+        </span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Status</span>
+        <span class="company-meta-value">
+          <span class="badge badge--status-{{ application.status.lower() }}">{{ application.status }}</span>
+        </span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Employment Type</span>
+        <span class="company-meta-value">{{ application.employment_type or "Not specified" }}</span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Location</span>
+        <span class="company-meta-value">{{ application.location or "Not specified" }}</span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Compensation / Salary</span>
+        <span class="company-meta-value">
+          {% if application.salary_min and application.salary_max %}
+            {{ "{:,.0f}".format(application.salary_min) }} – {{ "{:,.0f}".format(application.salary_max) }} {{ application.currency }}
+          {% elif application.salary_min %}
+            From {{ "{:,.0f}".format(application.salary_min) }} {{ application.currency }}
+          {% elif application.salary_max %}
+            Up to {{ "{:,.0f}".format(application.salary_max) }} {{ application.currency }}
+          {% else %}
+            Not specified
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Date Applied</span>
+        <span class="company-meta-value">
+          {% if application.applied_at %}
+            {{ application.applied_at.strftime('%B %d, %Y') }}
+          {% else %}
+            Not yet applied
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Record Created</span>
+        <span class="company-meta-value">{{ application.created_at.strftime('%B %d, %Y') }}</span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Last Updated</span>
+        <span class="company-meta-value">{{ application.updated_at.strftime('%B %d, %Y') }}</span>
+      </div>
+
+      {% if application.job_description %}
+      <div class="company-meta-item company-meta-item--full">
+        <span class="company-meta-label">Job Description / Responsibilities</span>
+        <div class="company-meta-value" style="white-space: pre-wrap; margin-top: 4px; padding: var(--space-4); background-color: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: 0.875rem; line-height: 1.6;">
+          {{- application.job_description -}}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if application.notes %}
+      <div class="company-meta-item company-meta-item--full">
+        <span class="company-meta-label">Candidate Notes</span>
+        <div class="company-meta-value" style="white-space: pre-wrap; margin-top: 4px; padding: var(--space-4); background-color: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: 0.875rem; line-height: 1.6;">
+          {{- application.notes -}}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Status Lifecycle Timeline (Phase 4 Placeholder) -->
+  <div class="dashboard-card" style="margin-top: var(--space-8);">
+    <div class="dashboard-card__header">
+      <div class="dashboard-card__title-group">
+        <h2 class="dashboard-card__title">Status Lifecycle & History</h2>
+      </div>
+      <span class="dashboard-card__phase">Phase 4: Upcoming</span>
+    </div>
+    <div style="padding: var(--space-6); background-color: #FFFFFF; border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); margin-top: var(--space-4);">
+      <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin: 0;">
+        Interactive state machine transitions (e.g. Applied &rarr; Assessment &rarr; Interview &rarr; Offer) and chronological transition logs with timestamped notes will be available in Phase 4.
+      </p>
+    </div>
+  </div>
+
+  <!-- Interview Rounds (Phase 5 Placeholder) -->
+  <div class="dashboard-card" style="margin-top: var(--space-8);">
+    <div class="dashboard-card__header">
+      <div class="dashboard-card__title-group">
+        <h2 class="dashboard-card__title">Interviews & Preparation</h2>
+      </div>
+      <span class="dashboard-card__phase">Phase 5: Upcoming</span>
+    </div>
+    <div style="padding: var(--space-6); background-color: #FFFFFF; border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); margin-top: var(--space-4);">
+      <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin: 0;">
+        Track multi-stage interview rounds, scheduled dates, interviewer names, and debrief notes in Phase 5.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

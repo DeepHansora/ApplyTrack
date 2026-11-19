@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Companies — ApplyTrack{% endblock %}
+
+{% block content %}
+<section class="site-container directory-section">
+  {% set flash = get_flashed_message() %}
+  {% if flash %}
+  <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+    <span class="flash__badge">{{ flash.category }}</span>
+    <span class="flash__message">{{ flash.message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Directory Header -->
+  <header class="dashboard-header">
+    <div class="dashboard-header__main">
+      <div class="dashboard-header__kicker-group">
+        <span class="dashboard-kicker">Directory &bull; Organization Directory</span>
+        <span class="dashboard-badge">Private</span>
+      </div>
+      <h1 class="dashboard-title">Companies</h1>
+      <p class="dashboard-lead">
+        Track prospective employers, interview contacts, and organization contexts. Every record is private to your account.
+      </p>
+    </div>
+
+    <div class="dashboard-header__actions">
+      <a href="/companies/new" class="btn btn--primary">+ Add Company</a>
+      {% if include_archived %}
+      <a href="/companies" class="btn btn--outline">Hide Archived</a>
+      {% else %}
+      <a href="/companies?include_archived=1" class="btn btn--outline">Show Archived</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Directory Table or Empty State -->
+  {% if companies %}
+  <div class="table-wrapper">
+    <table class="table" role="table" aria-label="Companies directory">
+      <thead>
+        <tr>
+          <th scope="col">Company Name</th>
+          <th scope="col">Industry</th>
+          <th scope="col">Location</th>
+          <th scope="col">Website</th>
+          <th scope="col">Status</th>
+          <th scope="col"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for company in companies %}
+        <tr>
+          <td class="table-cell-title">
+            <a href="/companies/{{ company.id }}">{{ company.name }}</a>
+          </td>
+          <td>{{ company.industry or "—" }}</td>
+          <td>{{ company.location or "—" }}</td>
+          <td>
+            {% if company.website %}
+            <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">
+              Visit &nearr;
+            </a>
+            {% else %}
+            —
+            {% endif %}
+          </td>
+          <td>
+            {% if company.is_archived %}
+            <span class="badge badge--archived">Archived</span>
+            {% else %}
+            <span class="badge badge--active">Active</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="table-cell-actions">
+              <a href="/companies/{{ company.id }}" class="btn btn--outline" style="padding: 4px 10px; font-size: 0.75rem;">View</a>
+              <a href="/companies/{{ company.id }}/edit" class="btn btn--outline" style="padding: 4px 10px; font-size: 0.75rem;">Edit</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state" style="border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background-color: #FFFFFF; margin-top: var(--space-6);">
+    <span class="empty-state__kicker">Directory Empty</span>
+    <h3 class="empty-state__heading">
+      {% if include_archived %}
+      No companies found
+      {% else %}
+      No active companies found
+      {% endif %}
+    </h3>
+    <p class="empty-state__body">
+      {% if include_archived %}
+      You have not created any company records yet. Start by adding an employer or organization you wish to track.
+      {% else %}
+      You have no active companies. Add a new company or view your archived companies.
+      {% endif %}
+    </p>
+    <div style="margin-top: var(--space-4); display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center;">
+      <a href="/companies/new" class="btn btn--primary">+ Add Your First Company</a>
+      {% if not include_archived %}
+      <a href="/companies?include_archived=1" class="btn btn--outline">Check Archived</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if company %}Edit {{ company.name }}{% else %}New Company{% endif %} — ApplyTrack
+{% endblock %}
+
+{% block content %}
+<section class="site-container directory-section">
+  <!-- Back Link -->
+  <a href="{% if company %}/companies/{{ company.id }}{% else %}/companies{% endif %}" class="btn-back">
+    &larr; Back to {% if company %}{{ company.name }}{% else %}Companies{% endif %}
+  </a>
+
+  <!-- Flash Message & Error Alerts -->
+  {% set flash = get_flashed_message() %}
+  {% if flash %}
+  <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+    <span class="flash__badge">{{ flash.category }}</span>
+    <span class="flash__message">{{ flash.message }}</span>
+  </div>
+  {% endif %}
+
+  {% if error %}
+  <div class="flash flash--error" role="alert" aria-live="polite">
+    <span class="flash__badge">Error</span>
+    <span class="flash__message">{{ error }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Form Card -->
+  <div class="auth-card" style="max-width: 640px; margin: 0 auto;">
+    <header class="auth-header">
+      <span class="auth-kicker">
+        {% if company %}Directory &bull; Update Record{% else %}Directory &bull; New Organization{% endif %}
+      </span>
+      <h1 class="auth-title">
+        {% if company %}Edit Company{% else %}Add Company{% endif %}
+      </h1>
+      <p class="auth-subtitle">
+        {% if company %}
+        Update organizational profile, contact details, and candidate notes.
+        {% else %}
+        Record an organization to link with job applications, interviews, and notes.
+        {% endif %}
+      </p>
+    </header>
+
+    <form method="post" 
+          action="{% if company %}/companies/{{ company.id }}/edit{% else %}/companies{% endif %}" 
+          class="form">
+      {{ csrf_input() }}
+
+      <!-- Company Name (Mandatory) -->
+      <div class="form-group">
+        <label for="name" class="form-label">Company Name *</label>
+        <input type="text"
+               id="name"
+               name="name"
+               class="form-input"
+               required
+               maxlength="255"
+               placeholder="e.g. Acme Corporation"
+               value="{{ form_data.get('name', company.name if company else '') }}"
+               autocomplete="organization">
+        <span class="form-hint">Display name as entered. Must be unique within your directory.</span>
+      </div>
+
+      <!-- Website URL (Optional) -->
+      <div class="form-group">
+        <label for="website" class="form-label">Website</label>
+        <input type="url"
+               id="website"
+               name="website"
+               class="form-input"
+               maxlength="2048"
+               placeholder="https://example.com"
+               value="{{ form_data.get('website', company.website if company and company.website else '') }}"
+               autocomplete="url">
+        <span class="form-hint">Corporate or careers website (optional).</span>
+      </div>
+
+      <!-- Industry (Optional) -->
+      <div class="form-group">
+        <label for="industry" class="form-label">Industry / Sector</label>
+        <input type="text"
+               id="industry"
+               name="industry"
+               class="form-input"
+               maxlength="100"
+               placeholder="e.g. FinTech, Artificial Intelligence, Healthcare"
+               value="{{ form_data.get('industry', company.industry if company and company.industry else '') }}">
+        <span class="form-hint">Market sector or domain (optional).</span>
+      </div>
+
+      <!-- Location (Optional) -->
+      <div class="form-group">
+        <label for="location" class="form-label">Location / Headquarters</label>
+        <input type="text"
+               id="location"
+               name="location"
+               class="form-input"
+               maxlength="255"
+               placeholder="e.g. San Francisco, CA or Remote"
+               value="{{ form_data.get('location', company.location if company and company.location else '') }}">
+        <span class="form-hint">Primary office or remote status (optional).</span>
+      </div>
+
+      <!-- Notes (Optional) -->
+      <div class="form-group">
+        <label for="notes" class="form-label">Candidate Notes</label>
+        <textarea id="notes"
+                  name="notes"
+                  class="form-textarea"
+                  rows="4"
+                  placeholder="Personal notes about the organization, recruiters, culture, or research...">{{ form_data.get('notes', company.notes if company and company.notes else '') }}</textarea>
+        <span class="form-hint">Private notes visible only to you (optional).</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary" style="flex: 1; min-height: 48px;">
+          {% if company %}Save Changes{% else %}Create Company{% endif %}
+        </button>
+        <a href="{% if company %}/companies/{{ company.id }}{% else %}/companies{% endif %}" class="btn btn--outline" style="min-height: 48px;">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

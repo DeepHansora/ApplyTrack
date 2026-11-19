@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.name }} — ApplyTrack{% endblock %}
+
+{% block content %}
+<section class="site-container directory-section">
+  <!-- Back Link -->
+  <a href="/companies" class="btn-back">
+    &larr; Back to Companies
+  </a>
+
+  <!-- Flash Message Display -->
+  {% set flash = get_flashed_message() %}
+  {% if flash %}
+  <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+    <span class="flash__badge">{{ flash.category }}</span>
+    <span class="flash__message">{{ flash.message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Detail Header Card -->
+  <div class="company-detail-card">
+    <div class="dashboard-header" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+      <div class="dashboard-header__main">
+        <div class="dashboard-header__kicker-group">
+          <span class="dashboard-kicker">Organization Profile</span>
+          {% if company.is_archived %}
+          <span class="badge badge--archived">Archived</span>
+          {% else %}
+          <span class="badge badge--active">Active</span>
+          {% endif %}
+        </div>
+        <h1 class="dashboard-title">{{ company.name }}</h1>
+        {% if company.website %}
+        <p class="dashboard-lead" style="margin-top: 4px;">
+          <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; color: var(--color-text-primary);">
+            {{ company.website }} &nearr;
+          </a>
+        </p>
+        {% endif %}
+      </div>
+
+      <div class="dashboard-header__actions">
+        <a href="/companies/{{ company.id }}/edit" class="btn btn--primary">Edit</a>
+        {% if company.is_archived %}
+        <form method="post" action="/companies/{{ company.id }}/unarchive" style="display:inline;">
+          {{ csrf_input() }}
+          <button type="submit" class="btn btn--outline">Unarchive</button>
+        </form>
+        {% else %}
+        <form method="post" action="/companies/{{ company.id }}/archive" style="display:inline;">
+          {{ csrf_input() }}
+          <button type="submit" class="btn btn--outline" onclick="return confirm('Archive {{ company.name }}? It will be hidden from default directory listings.');">
+            Archive
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="company-meta-grid">
+      <div class="company-meta-item">
+        <span class="company-meta-label">Industry</span>
+        <span class="company-meta-value">{{ company.industry or "Not specified" }}</span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Location</span>
+        <span class="company-meta-value">{{ company.location or "Not specified" }}</span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Record Created</span>
+        <span class="company-meta-value">{{ company.created_at.strftime('%B %d, %Y') }}</span>
+      </div>
+
+      <div class="company-meta-item">
+        <span class="company-meta-label">Last Updated</span>
+        <span class="company-meta-value">{{ company.updated_at.strftime('%B %d, %Y') }}</span>
+      </div>
+
+      {% if company.notes %}
+      <div class="company-meta-item company-meta-item--full">
+        <span class="company-meta-label">Candidate Notes</span>
+        <div class="company-meta-value" style="white-space: pre-wrap; margin-top: 4px; padding: var(--space-4); background-color: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm);">
+          {{- company.notes -}}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Associated Applications Section (Phase 3 Extension) -->
+  <div class="dashboard-card" style="margin-top: var(--space-8);">
+    <div class="dashboard-card__header">
+      <div class="dashboard-card__title-group">
+        <h2 class="dashboard-card__title">Associated Applications</h2>
+      </div>
+      <span class="dashboard-card__phase">Phase 3: Upcoming</span>
+    </div>
+
+    <div class="empty-state">
+      <span class="empty-state__kicker">No Linked Applications</span>
+      <h3 class="empty-state__heading">Application pipeline integration</h3>
+      <p class="empty-state__body">
+        Applications linked to {{ company.name }} will appear here once application management is implemented in the next step.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if application %}Edit {{ application.job_title }}{% else %}New Application{% endif %} — ApplyTrack
+{% endblock %}
+
+{% block content %}
+<section class="site-container directory-section">
+  <!-- Back Link -->
+  <a href="{% if application %}/applications/{{ application.id }}{% else %}/applications{% endif %}" class="btn-back">
+    &larr; Back to {% if application %}{{ application.job_title }}{% else %}Applications{% endif %}
+  </a>
+
+  <!-- Flash Message & Error Alerts -->
+  {% set flash = get_flashed_message() %}
+  {% if flash %}
+  <div class="flash flash--{{ flash.category }}" role="alert" aria-live="polite">
+    <span class="flash__badge">{{ flash.category }}</span>
+    <span class="flash__message">{{ flash.message }}</span>
+  </div>
+  {% endif %}
+
+  {% if error %}
+  <div class="flash flash--error" role="alert" aria-live="polite">
+    <span class="flash__badge">Validation Error</span>
+    <span class="flash__message">{{ error }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Empty Companies Warning for Create Form -->
+  {% if not application and not companies %}
+  <div class="empty-state" style="border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background-color: #FFFFFF; max-width: 680px; margin: 0 auto var(--space-8);">
+    <span class="empty-state__kicker">Prerequisite Required</span>
+    <h3 class="empty-state__heading">Add an Active Company First</h3>
+    <p class="empty-state__body">
+      Every job application must be associated with an active company in your private directory. Please create at least one company before adding an application.
+    </p>
+    <div style="margin-top: var(--space-6);">
+      <a href="/companies/new" class="btn btn--primary">+ Add Company</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Form Card -->
+  <div class="auth-card" style="max-width: 680px; margin: 0 auto;">
+    <header class="auth-header">
+      <span class="auth-kicker">
+        {% if application %}Directory &bull; Update Record{% else %}Directory &bull; New Application{% endif %}
+      </span>
+      <h1 class="auth-title">
+        {% if application %}Edit Application{% else %}Add Application{% endif %}
+      </h1>
+      <p class="auth-subtitle">
+        {% if application %}
+        Update job details, compensation parameters, and interview notes.
+        {% else %}
+        Record a new job opportunity linked to an employer in your directory.
+        {% endif %}
+      </p>
+    </header>
+
+    <form method="post" 
+          action="{% if application %}/applications/{{ application.id }}/edit{% else %}/applications{% endif %}" 
+          class="form">
+      {{ csrf_input() }}
+
+      <!-- Company Selector (Mandatory) -->
+      <div class="form-group">
+        <label for="company_id" class="form-label">Company *</label>
+        <select id="company_id" 
+                name="company_id" 
+                required 
+                class="form-select">
+          <option value="">Select a company...</option>
+          {% for comp in companies %}
+          <option value="{{ comp.id }}" 
+                  {% if form_data.get('company_id') == comp.id|string %}selected{% endif %}>
+            {{ comp.name }}{% if comp.is_archived %} (Archived){% endif %}
+          </option>
+          {% endfor %}
+        </select>
+        <span class="form-hint">Must belong to an organization in your private directory.</span>
+      </div>
+
+      <!-- Job Title (Mandatory) -->
+      <div class="form-group">
+        <label for="job_title" class="form-label">Job Title *</label>
+        <input type="text"
+               id="job_title"
+               name="job_title"
+               class="form-input"
+               required
+               maxlength="255"
+               placeholder="e.g. Senior Software Engineer"
+               value="{{ form_data.get('job_title', '') }}">
+        <span class="form-hint">Position or role title.</span>
+      </div>
+
+      <!-- Initial Status (Create Only) -->
+      {% if not application %}
+      <div class="form-group">
+        <label for="status" class="form-label">Initial Status *</label>
+        <select id="status" name="status" required class="form-select">
+          {% for st in statuses %}
+          <option value="{{ st }}" {% if form_data.get('status', 'Saved') == st %}selected{% endif %}>
+            {{ st }}
+          </option>
+          {% endfor %}
+        </select>
+        <span class="form-hint">Starting status for this job application. Lifecycle transitions are managed in Phase 4.</span>
+      </div>
+      {% else %}
+      <div class="form-group">
+        <label class="form-label">Current Status</label>
+        <div>
+          <span class="badge badge--status-{{ application.status.lower() }}">{{ application.status }}</span>
+          <span class="form-hint" style="display: inline-block; margin-left: 8px;">
+            Status lifecycle transitions are managed in Phase 4.
+          </span>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Employment Type & Location Row -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="employment_type" class="form-label">Employment Type</label>
+          <select id="employment_type" name="employment_type" class="form-select">
+            <option value="">Not Specified</option>
+            {% for et in employment_types %}
+            <option value="{{ et }}" {% if form_data.get('employment_type') == et %}selected{% endif %}>
+              {{ et }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="location" class="form-label">Location</label>
+          <input type="text"
+                 id="location"
+                 name="location"
+                 class="form-input"
+                 maxlength="255"
+                 placeholder="e.g. Remote, San Francisco, CA"
+                 value="{{ form_data.get('location', '') }}">
+        </div>
+      </div>
+
+      <!-- Job URL -->
+      <div class="form-group">
+        <label for="job_url" class="form-label">Job Posting URL</label>
+        <input type="url"
+               id="job_url"
+               name="job_url"
+               class="form-input"
+               maxlength="2048"
+               placeholder="https://jobs.example.com/posting/123"
+               value="{{ form_data.get('job_url', '') }}">
+        <span class="form-hint">Link to the original job posting or careers listing.</span>
+      </div>
+
+      <!-- Salary Compensation Row -->
+      <div class="form-row--3 form-row">
+        <div class="form-group">
+          <label for="salary_min" class="form-label">Min Salary</label>
+          <input type="number"
+                 step="0.01"
+                 min="0"
+                 id="salary_min"
+                 name="salary_min"
+                 class="form-input"
+                 placeholder="e.g. 120000"
+                 value="{{ form_data.get('salary_min', '') }}">
+        </div>
+
+        <div class="form-group">
+          <label for="salary_max" class="form-label">Max Salary</label>
+          <input type="number"
+                 step="0.01"
+                 min="0"
+                 id="salary_max"
+                 name="salary_max"
+                 class="form-input"
+                 placeholder="e.g. 150000"
+                 value="{{ form_data.get('salary_max', '') }}">
+        </div>
+
+        <div class="form-group">
+          <label for="currency" class="form-label">Currency</label>
+          <input type="text"
+                 id="currency"
+                 name="currency"
+                 class="form-input"
+                 maxlength="3"
+                 pattern="[A-Za-z]{3}"
+                 placeholder="USD"
+                 style="text-transform: uppercase;"
+                 value="{{ form_data.get('currency', 'USD') }}">
+        </div>
+      </div>
+
+      <!-- Applied At Date -->
+      <div class="form-group">
+        <label for="applied_at" class="form-label">Date Applied</label>
+        <input type="date"
+               id="applied_at"
+               name="applied_at"
+               class="form-input"
+               value="{{ form_data.get('applied_at', '') }}">
+        <span class="form-hint">Date you submitted this application (optional).</span>
+      </div>
+
+      <!-- Job Description -->
+      <div class="form-group">
+        <label for="job_description" class="form-label">Job Description</label>
+        <textarea id="job_description"
+                  name="job_description"
+                  class="form-textarea"
+                  rows="5"
+                  placeholder="Paste role overview, responsibilities, or qualification notes...">{{ form_data.get('job_description', '') }}</textarea>
+        <span class="form-hint">Retain a copy of the requirements in case the listing is taken down.</span>
+      </div>
+
+      <!-- Candidate Notes -->
+      <div class="form-group">
+        <label for="notes" class="form-label">Candidate Notes</label>
+        <textarea id="notes"
+                  name="notes"
+                  class="form-textarea"
+                  rows="4"
+                  placeholder="Private thoughts, referral contacts, interview impressions...">{{ form_data.get('notes', '') }}</textarea>
+        <span class="form-hint">Private to you. Never shared with employers.</span>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary">
+          {% if application %}Save Changes{% else %}Create Application{% endif %}
+        </button>
+        <a href="{% if application %}/applications/{{ application.id }}{% else %}/applications{% endif %}" 
+           class="btn btn--outline">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -9,6 +9,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from app.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
 
 if TYPE_CHECKING:
+    from app.models.application import Application
+    from app.models.company import Company
     from app.models.user_session import UserSession
 
 
@@ -54,6 +56,16 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     # Relationships
     sessions: Mapped[List["UserSession"]] = relationship(
         "UserSession",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    companies: Mapped[List["Company"]] = relationship(
+        "Company",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    applications: Mapped[List["Application"]] = relationship(
+        "Application",
         back_populates="user",
         cascade="all, delete-orphan",
     )

@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.routers.auth import router as auth_router
+from app.routers.applications import router as applications_router
+from app.routers.companies import router as companies_router
 from app.routers.dashboard import router as dashboard_router
 from app.routers.public import router as public_router
 
@@ -21,3 +23,5 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.include_router(public_router)
 app.include_router(auth_router)
 app.include_router(dashboard_router)
+app.include_router(companies_router)
+app.include_router(applications_router)

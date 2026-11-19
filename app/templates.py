@@ -134,3 +134,4 @@ def flash_message_global(context: dict) -> dict[str, str] | None:
 templates.env.globals["csrf_token"] = csrf_token_global
 templates.env.globals["csrf_input"] = csrf_input_global
 templates.env.globals["get_flashed_message"] = flash_message_global
+templates.env.globals["str"] = str
